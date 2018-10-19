@@ -1,16 +1,17 @@
 installer:
   image: andreaskoch/dockerized-magento-installer
+  container_name: installer
   environment:
-    DOMAIN: dockerized-magento.local
+    DOMAIN: magento.vm
     MAGENTO_ROOT: /var/www/html/web
     MYSQL_HOST: mysql
     MYSQL_DATABASE: magento
     MYSQL_USER: root
-    MYSQL_PASSWORD: pw
+    MYSQL_PASSWORD: a12345
     ADMIN_USERNAME: admin
-    ADMIN_FIRSTNAME: Admin
-    ADMIN_LASTNAME: Inistrator
-    ADMIN_PASSWORD: password123
+    ADMIN_FIRSTNAME: John
+    ADMIN_LASTNAME: Doe
+    ADMIN_PASSWORD: a12345
     ADMIN_FRONTNAME: admin
     ADMIN_EMAIL: admin@example.com
     ENCRYPTIONKEY: 731aea833710535779fe8c7c49bc6c4d
@@ -33,6 +34,7 @@ installer:
 
 nginx:
   image: nginx:latest
+  container_name: nginx
   ports:
     - "80:80"
     - "443:443"
@@ -50,6 +52,7 @@ nginx:
     - php
 php:
   image: andreaskoch/dockerized-magento-php
+  container_name: php
   links:
     - "cache:rediscache"
     - "sessions:redissession"
@@ -58,25 +61,37 @@ php:
     - "mysql:mysql"
   volumes:
     - .:/var/www/html
+
 mysql:
   image: mysql:5.5
+  container_name: mysql
   ports:
     - "3306:3306"
   environment:
-    MYSQL_ROOT_PASSWORD: pw
+    MYSQL_ROOT_PASSWORD: a12345
   command: mysqld --innodb-use-native-aio=0
   volumes:
     - ./data/mysql:/var/lib/mysql
+
 solr:
   image: andreaskoch/dockerized-magento-solr
+  container_name: solr
+
 cache:
   image: redis:latest
+  container_name: cache
+
 fullpagecache:
   image: redis:latest
+  container_name: fullpagecache
+
 sessions:
   image: redis:latest
+  container_name: sessions
+
 phpmyadmin:
   image: phpmyadmin/phpmyadmin
+  container_name: phpmyadmin
   ports:
     - "8080:80"
   links:
@@ -84,3 +99,4 @@ phpmyadmin:
   environment:
     PMA_HOST: "mysql"
     PMA_PORT: 3306
+
